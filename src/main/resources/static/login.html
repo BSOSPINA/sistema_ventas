@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+
+<h2>Login Empleados</h2>
+
+<label>Correo:</label>
+<input type="text" id="correo"><br><br>
+
+<label>Clave (ID Empleado):</label>
+<input type="password" id="clave"><br><br>
+
+<button onclick="login()">Ingresar</button>
+
+<p id="mensaje"></p>
+
+<script>
+    function login() {
+        const datos = {
+            correo: document.getElementById("correo").value,
+            clave: document.getElementById("clave").value
+        };
+
+        fetch("http://localhost:8082/api/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(datos)
+        })
+        .then(res => res.text())
+        .then(respuesta => {
+            if (respuesta.startsWith("OK")) {
+                let nombre = respuesta.split(":")[1].trim();
+                localStorage.setItem("empleado", nombre);
+                window.location.href = "menu.html";
+            } else {
+                document.getElementById("mensaje").innerText = respuesta;
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

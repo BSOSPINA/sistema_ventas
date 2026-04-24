@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Principal</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .bienvenida {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 0px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #1e293b;
+        }
+
+        .card p {
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #1e293b;
+            color: white;
+            margin-top: 30px;
+        }
+    </style>
+
+</head>
+<body>
+
+<header>
+    <h2>Sistema de Ventas - Menú Principal</h2>
+</header>
+
+<div class="container">
+
+    <div class="bienvenida">
+        <h3 id="nombreEmpleado">Bienvenido</h3>
+        <p>Seleccione una opción del sistema</p>
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+            <h3>Personas</h3>
+            <p>Administrar empleados y clientes</p>
+            <a class="btn" href="personas.html">Abrir</a>
+        </div>
+
+        <div class="card">
+            <h3>Proveedores</h3>
+            <p>Gestión completa de proveedores</p>
+            <a class="btn" href="proveedor.html">Abrir</a>
+        </div>
+
+        <div class="card">
+            <h3>Productos</h3>
+            <p>Inventario y catálogo de productos</p>
+            <a class="btn" href="producto.html">Abrir</a>
+        </div>
+
+        <div class="card">
+            <h3>Pedidos</h3>
+            <p>Registrar pedidos de clientes</p>
+            <a class="btn" href="pedido.html">Abrir</a>
+        </div>
+
+        <div class="card">
+            <h3>Detalle Pedido</h3>
+            <p>Tabla Producto_Pedidos (productos dentro del pedido)</p>
+            <a class="btn" href="producto_pedidos.html">Abrir</a>
+        </div>
+
+        <div class="card">
+            <h3>Facturas</h3>
+            <p>Generar y administrar facturas manualmente</p>
+            <a class="btn" href="factura.html">Abrir</a>
+        </div>
+
+        <div class="card">
+            <h3>Factura Automática</h3>
+            <p>Generar factura calculando total desde el pedido</p>
+            <a class="btn" href="factura_auto.html">Abrir</a>
+        </div>
+
+        <div class="card">
+            <h3>Cerrar Sesión</h3>
+            <p>Salir del sistema y volver al login</p>
+            <a class="btn btn-danger" href="login.html" onclick="cerrarSesion()">Salir</a>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    <p>© 2026 Sistema de Ventas - Proyecto Java Spring Boot</p>
+</footer>
+
+<script>
+    // Mostrar nombre guardado desde el login
+    let empleado = localStorage.getItem("empleado");
+
+    if (empleado != null) {
+        document.getElementById("nombreEmpleado").innerText = "Bienvenido: " + empleado;
+    } else {
+        document.getElementById("nombreEmpleado").innerText = "Bienvenido al Sistema";
+    }
+
+    function cerrarSesion() {
+        localStorage.removeItem("empleado");
+    }
+</script>
+
+</body>
+</html>

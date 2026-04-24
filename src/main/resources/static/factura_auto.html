@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura Automática</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        .contenedor {
+            background: white;
+            max-width: 500px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e293b;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #mensaje {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        a {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <h2>Generar Factura Automática</h2>
+
+    <label>ID Factura:</label>
+    <input type="text" id="idFactura" placeholder="Ej: FAC100">
+
+    <label>ID Pedido:</label>
+    <input type="text" id="idPedido" placeholder="Ej: PED001">
+
+    <label>ID Método Pago:</label>
+    <input type="text" id="idMetodo" placeholder="Ej: MP001">
+
+    <label>ID Empleado:</label>
+    <input type="text" id="idEmpleado" placeholder="Ej: EMP001">
+
+    <button onclick="generarFactura()">Generar Factura</button>
+
+    <p id="mensaje"></p>
+
+    <a href="menu.html">⬅ Volver al menú</a>
+</div>
+
+<script>
+    function generarFactura() {
+
+        let idFactura = document.getElementById("idFactura").value;
+        let idPedido = document.getElementById("idPedido").value;
+        let idMetodo = document.getElementById("idMetodo").value;
+        let idEmpleado = document.getElementById("idEmpleado").value;
+
+        if(idFactura === "" || idPedido === "" || idMetodo === "" || idEmpleado === ""){
+            document.getElementById("mensaje").innerText = "Complete todos los campos";
+            return;
+        }
+
+        fetch(`http://localhost:8082/api/factura_auto?idFactura=${idFactura}&idPedido=${idPedido}&idMetodo=${idMetodo}&idEmpleado=${idEmpleado}`, {
+            method: "POST"
+        })
+        .then(res => {
+            if(!res.ok){
+                throw new Error("Error");
+            }
+            return res.json();
+        })
+        .then(data => {
+            document.getElementById("mensaje").innerText =
+                "Factura generada correctamente. Total: $" + data.totalFactura;
+        })
+        .catch(err => {
+            document.getElementById("mensaje").innerText = "Error generando factura. Verifique el pedido.";
+        });
+    }
+</script>
+
+</body>
+</html>

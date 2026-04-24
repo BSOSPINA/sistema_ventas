@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD Personas</title>
+</head>
+<body>
+
+<h2>CRUD Personas</h2>
+
+<label>ID Persona:</label>
+<input type="text" id="idPersona"><br><br>
+
+<label>Nombre:</label>
+<input type="text" id="nombre"><br><br>
+
+<label>Número Identificación:</label>
+<input type="text" id="numId"><br><br>
+
+<label>Tipo Identificación:</label>
+<input type="text" id="tipoId"><br><br>
+
+<label>Dirección:</label>
+<input type="text" id="direccion"><br><br>
+
+<label>Teléfono:</label>
+<input type="text" id="telefono"><br><br>
+
+<label>Correo:</label>
+<input type="text" id="correo"><br><br>
+
+<label>ID Rol:</label>
+<input type="text" id="idRol"><br><br>
+
+<label>RH:</label>
+<input type="text" id="rh"><br><br>
+
+<label>Tipo Cargo:</label>
+<input type="text" id="cargo"><br><br>
+
+<label>Empleado Asignado:</label>
+<input type="text" id="empleadoAsignado"><br><br>
+
+<button onclick="guardar()">Guardar</button>
+<button onclick="editar()">Editar</button>
+<button onclick="eliminar()">Eliminar</button>
+<button onclick="limpiar()">Limpiar</button>
+
+<hr>
+
+<table border="1" width="100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Identificación</th>
+            <th>Tipo ID</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>RH</th>
+            <th>Cargo</th>
+            <th>Empleado Asignado</th>
+        </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+</table>
+
+<script>
+    const url = "http://localhost:8082/api/personas";
+
+    function cargar() {
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                let filas = "";
+                data.forEach(p => {
+                    filas += `
+                        <tr onclick="seleccionar(
+                            '${p.idPersona}',
+                            '${p.nombre}',
+                            '${p.numeroIdentificacion}',
+                            '${p.tipoIdentificacion}',
+                            '${p.direccion}',
+                            '${p.telefono}',
+                            '${p.correo}',
+                            '${p.idRol}',
+                            '${p.rh}',
+                            '${p.tipoCargo}',
+                            '${p.idEmpleadoAsignado}'
+                        )">
+                            <td>${p.idPersona}</td>
+                            <td>${p.nombre}</td>
+                            <td>${p.numeroIdentificacion}</td>
+                            <td>${p.tipoIdentificacion}</td>
+                            <td>${p.direccion}</td>
+                            <td>${p.telefono}</td>
+                            <td>${p.correo}</td>
+                            <td>${p.idRol}</td>
+                            <td>${p.rh}</td>
+                            <td>${p.tipoCargo}</td>
+                            <td>${p.idEmpleadoAsignado}</td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("tabla").innerHTML = filas;
+            });
+    }
+
+    function seleccionar(id,nombre,numId,tipoId,direccion,telefono,correo,idRol,rh,cargo,empleadoAsignado){
+        document.getElementById("idPersona").value = id;
+        document.getElementById("nombre").value = nombre;
+        document.getElementById("numId").value = numId;
+        document.getElementById("tipoId").value = tipoId;
+        document.getElementById("direccion").value = direccion;
+        document.getElementById("telefono").value = telefono;
+        document.getElementById("correo").value = correo;
+        document.getElementById("idRol").value = idRol;
+        document.getElementById("rh").value = rh;
+        document.getElementById("cargo").value = cargo;
+        document.getElementById("empleadoAsignado").value = empleadoAsignado;
+    }
+
+    function guardar() {
+        const persona = {
+            idPersona: document.getElementById("idPersona").value,
+            nombre: document.getElementById("nombre").value,
+            numeroIdentificacion: document.getElementById("numId").value,
+            tipoIdentificacion: document.getElementById("tipoId").value,
+            direccion: document.getElementById("direccion").value,
+            telefono: document.getElementById("telefono").value,
+            correo: document.getElementById("correo").value,
+            idRol: document.getElementById("idRol").value,
+            rh: document.getElementById("rh").value,
+            tipoCargo: document.getElementById("cargo").value,
+            idEmpleadoAsignado: document.getElementById("empleadoAsignado").value
+        };
+
+        fetch(url, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(persona)
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function editar() {
+        const id = document.getElementById("idPersona").value;
+
+        const persona = {
+            idPersona: id,
+            nombre: document.getElementById("nombre").value,
+            numeroIdentificacion: document.getElementById("numId").value,
+            tipoIdentificacion: document.getElementById("tipoId").value,
+            direccion: document.getElementById("direccion").value,
+            telefono: document.getElementById("telefono").value,
+            correo: document.getElementById("correo").value,
+            idRol: document.getElementById("idRol").value,
+            rh: document.getElementById("rh").value,
+            tipoCargo: document.getElementById("cargo").value,
+            idEmpleadoAsignado: document.getElementById("empleadoAsignado").value
+        };
+
+        fetch(url + "/" + id, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(persona)
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function eliminar() {
+        const id = document.getElementById("idPersona").value;
+
+        fetch(url + "/" + id, {
+            method: "DELETE"
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function limpiar() {
+        document.getElementById("idPersona").value = "";
+        document.getElementById("nombre").value = "";
+        document.getElementById("numId").value = "";
+        document.getElementById("tipoId").value = "";
+        document.getElementById("direccion").value = "";
+        document.getElementById("telefono").value = "";
+        document.getElementById("correo").value = "";
+        document.getElementById("idRol").value = "";
+        document.getElementById("rh").value = "";
+        document.getElementById("cargo").value = "";
+        document.getElementById("empleadoAsignado").value = "";
+    }
+
+    cargar();
+</script>
+
+</body>
+</html>

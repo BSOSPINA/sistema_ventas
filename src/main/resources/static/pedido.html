@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD Pedidos</title>
+</head>
+<body>
+
+<h2>CRUD Pedidos</h2>
+
+<label>ID Pedido:</label>
+<input type="text" id="idPedido"><br><br>
+
+<label>Fecha Pedido:</label>
+<input type="date" id="fecha"><br><br>
+
+<label>Número Pedido:</label>
+<input type="text" id="numero"><br><br>
+
+<label>Estado Pedido:</label>
+<select id="estado">
+    <option value="pendiente">pendiente</option>
+    <option value="en_proceso">en_proceso</option>
+    <option value="finalizado">finalizado</option>
+    <option value="cancelado">cancelado</option>
+</select><br><br>
+
+<label>ID Cliente (Persona):</label>
+<input type="text" id="idPersona"><br><br>
+
+<button onclick="guardar()">Guardar</button>
+<button onclick="editar()">Editar</button>
+<button onclick="eliminar()">Eliminar</button>
+<button onclick="limpiar()">Limpiar</button>
+
+<hr>
+
+<table border="1" width="100%">
+    <thead>
+        <tr>
+            <th>ID Pedido</th>
+            <th>Fecha</th>
+            <th>Número</th>
+            <th>Estado</th>
+            <th>ID Cliente</th>
+        </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+</table>
+
+<script>
+    const url = "http://localhost:8082/api/pedidos";
+
+    function cargar() {
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                let filas = "";
+                data.forEach(p => {
+                    filas += `
+                        <tr onclick="seleccionar('${p.idPedido}','${p.fechaPedido}','${p.numeroPedido}','${p.estadoPedido}','${p.idPersona}')">
+                            <td>${p.idPedido}</td>
+                            <td>${p.fechaPedido}</td>
+                            <td>${p.numeroPedido}</td>
+                            <td>${p.estadoPedido}</td>
+                            <td>${p.idPersona}</td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("tabla").innerHTML = filas;
+            });
+    }
+
+    function seleccionar(id, fecha, numero, estado, idPersona) {
+        document.getElementById("idPedido").value = id;
+        document.getElementById("fecha").value = fecha;
+        document.getElementById("numero").value = numero;
+        document.getElementById("estado").value = estado;
+        document.getElementById("idPersona").value = idPersona;
+    }
+
+    function guardar() {
+        const pedido = {
+            idPedido: document.getElementById("idPedido").value,
+            fechaPedido: document.getElementById("fecha").value,
+            numeroPedido: document.getElementById("numero").value,
+            estadoPedido: document.getElementById("estado").value,
+            idPersona: document.getElementById("idPersona").value
+        };
+
+        fetch(url, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(pedido)
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function editar() {
+        const id = document.getElementById("idPedido").value;
+
+        const pedido = {
+            idPedido: id,
+            fechaPedido: document.getElementById("fecha").value,
+            numeroPedido: document.getElementById("numero").value,
+            estadoPedido: document.getElementById("estado").value,
+            idPersona: document.getElementById("idPersona").value
+        };
+
+        fetch(url + "/" + id, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(pedido)
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function eliminar() {
+        const id = document.getElementById("idPedido").value;
+
+        fetch(url + "/" + id, {
+            method: "DELETE"
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function limpiar() {
+        document.getElementById("idPedido").value = "";
+        document.getElementById("fecha").value = "";
+        document.getElementById("numero").value = "";
+        document.getElementById("estado").value = "pendiente";
+        document.getElementById("idPersona").value = "";
+    }
+
+    cargar();
+</script>
+
+</body>
+</html>

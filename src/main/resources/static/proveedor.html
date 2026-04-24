@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD Proveedores</title>
+</head>
+<body>
+
+<h2>CRUD Proveedores</h2>
+
+<label>ID:</label>
+<input type="text" id="idProv"><br><br>
+
+<label>Nombre:</label>
+<input type="text" id="nombre"><br><br>
+
+<label>Dirección:</label>
+<input type="text" id="direccion"><br><br>
+
+<label>Teléfono:</label>
+<input type="text" id="telefono"><br><br>
+
+<label>Correo:</label>
+<input type="text" id="correo"><br><br>
+
+<button onclick="guardar()">Guardar</button>
+<button onclick="editar()">Editar</button>
+<button onclick="eliminar()">Eliminar</button>
+<button onclick="limpiar()">Limpiar</button>
+
+<hr>
+
+<table border="1" width="100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+        </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+</table>
+
+<script>
+    const url = "http://localhost:8081/api/proveedores";
+
+    function cargar() {
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                let filas = "";
+                data.forEach(p => {
+                    filas += `
+                        <tr onclick="seleccionar('${p.idProv}','${p.nombre}','${p.direccion}','${p.telefono}','${p.correo}')">
+                            <td>${p.idProv}</td>
+                            <td>${p.nombre}</td>
+                            <td>${p.direccion}</td>
+                            <td>${p.telefono}</td>
+                            <td>${p.correo}</td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("tabla").innerHTML = filas;
+            });
+    }
+
+    function seleccionar(id,nombre,direccion,telefono,correo){
+        document.getElementById("idProv").value = id;
+        document.getElementById("nombre").value = nombre;
+        document.getElementById("direccion").value = direccion;
+        document.getElementById("telefono").value = telefono;
+        document.getElementById("correo").value = correo;
+    }
+
+    function guardar() {
+        const proveedor = {
+            idProv: document.getElementById("idProv").value,
+            nombre: document.getElementById("nombre").value,
+            direccion: document.getElementById("direccion").value,
+            telefono: document.getElementById("telefono").value,
+            correo: document.getElementById("correo").value
+        };
+
+        fetch(url, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(proveedor)
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function editar() {
+        const id = document.getElementById("idProv").value;
+
+        const proveedor = {
+            idProv: id,
+            nombre: document.getElementById("nombre").value,
+            direccion: document.getElementById("direccion").value,
+            telefono: document.getElementById("telefono").value,
+            correo: document.getElementById("correo").value
+        };
+
+        fetch(url + "/" + id, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(proveedor)
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function eliminar() {
+        const id = document.getElementById("idProv").value;
+
+        fetch(url + "/" + id, {
+            method: "DELETE"
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function limpiar() {
+        document.getElementById("idProv").value = "";
+        document.getElementById("nombre").value = "";
+        document.getElementById("direccion").value = "";
+        document.getElementById("telefono").value = "";
+        document.getElementById("correo").value = "";
+    }
+
+    cargar();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>CRUD Facturas</title>
+</head>
+<body>
+
+<h2>CRUD Factura Venta</h2>
+
+<label>ID Factura:</label>
+<input type="text" id="idFactura"><br><br>
+
+<label>Fecha Factura:</label>
+<input type="date" id="fecha"><br><br>
+
+<label>Estado:</label>
+<select id="estado">
+    <option value="pendiente">pendiente</option>
+    <option value="pagada">pagada</option>
+    <option value="anulada">anulada</option>
+</select><br><br>
+
+<label>Total:</label>
+<input type="number" id="total"><br><br>
+
+<label>ID Cliente:</label>
+<input type="text" id="idCliente"><br><br>
+
+<label>ID Empleado:</label>
+<input type="text" id="idEmpleado"><br><br>
+
+<label>ID Pedido:</label>
+<input type="text" id="idPedido"><br><br>
+
+<label>ID Método Pago:</label>
+<input type="text" id="idMetodo"><br><br>
+
+<button onclick="guardar()">Guardar</button>
+<button onclick="editar()">Editar</button>
+<button onclick="eliminar()">Eliminar</button>
+<button onclick="limpiar()">Limpiar</button>
+
+<hr>
+
+<table border="1" width="100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Total</th>
+            <th>Cliente</th>
+            <th>Empleado</th>
+            <th>Pedido</th>
+            <th>Método</th>
+        </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+</table>
+
+<script>
+    const url = "http://localhost:8082/api/facturas";
+
+    function cargar() {
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                let filas = "";
+                data.forEach(f => {
+                    filas += `
+                        <tr onclick="seleccionar(
+                            '${f.idFactura}',
+                            '${f.fechaFactura}',
+                            '${f.estadoFactura}',
+                            '${f.totalFactura}',
+                            '${f.idCliente}',
+                            '${f.idEmpleado}',
+                            '${f.idPedido}',
+                            '${f.idMetodo}'
+                        )">
+                            <td>${f.idFactura}</td>
+                            <td>${f.fechaFactura}</td>
+                            <td>${f.estadoFactura}</td>
+                            <td>${f.totalFactura}</td>
+                            <td>${f.idCliente}</td>
+                            <td>${f.idEmpleado}</td>
+                            <td>${f.idPedido}</td>
+                            <td>${f.idMetodo}</td>
+                        </tr>
+                    `;
+                });
+                document.getElementById("tabla").innerHTML = filas;
+            });
+    }
+
+    function seleccionar(id, fecha, estado, total, cliente, empleado, pedido, metodo) {
+        document.getElementById("idFactura").value = id;
+        document.getElementById("fecha").value = fecha;
+        document.getElementById("estado").value = estado;
+        document.getElementById("total").value = total;
+        document.getElementById("idCliente").value = cliente;
+        document.getElementById("idEmpleado").value = empleado;
+        document.getElementById("idPedido").value = pedido;
+        document.getElementById("idMetodo").value = metodo;
+    }
+
+    function guardar() {
+        const factura = {
+            idFactura: document.getElementById("idFactura").value,
+            fechaFactura: document.getElementById("fecha").value,
+            estadoFactura: document.getElementById("estado").value,
+            totalFactura: document.getElementById("total").value,
+            idCliente: document.getElementById("idCliente").value,
+            idEmpleado: document.getElementById("idEmpleado").value,
+            idPedido: document.getElementById("idPedido").value,
+            idMetodo: document.getElementById("idMetodo").value
+        };
+
+        fetch(url, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(factura)
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function editar() {
+        const id = document.getElementById("idFactura").value;
+
+        const factura = {
+            idFactura: id,
+            fechaFactura: document.getElementById("fecha").value,
+            estadoFactura: document.getElementById("estado").value,
+            totalFactura: document.getElementById("total").value,
+            idCliente: document.getElementById("idCliente").value,
+            idEmpleado: document.getElementById("idEmpleado").value,
+            idPedido: document.getElementById("idPedido").value,
+            idMetodo: document.getElementById("idMetodo").value
+        };
+
+        fetch(url + "/" + id, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(factura)
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function eliminar() {
+        const id = document.getElementById("idFactura").value;
+
+        fetch(url + "/" + id, {
+            method: "DELETE"
+        }).then(() => {
+            limpiar();
+            cargar();
+        });
+    }
+
+    function limpiar() {
+        document.getElementById("idFactura").value = "";
+        document.getElementById("fecha").value = "";
+        document.getElementById("estado").value = "pendiente";
+        document.getElementById("total").value = "";
+        document.getElementById("idCliente").value = "";
+        document.getElementById("idEmpleado").value = "";
+        document.getElementById("idPedido").value = "";
+        document.getElementById("idMetodo").value = "";
+    }
+
+    cargar();
+</script>
+
+</body>
+</html>
